@@ -1,87 +1,93 @@
 <template>
-  <div class="quote-container">
-    <!-- Quote -->
-    <div class="quote-text">
-      <img
-        src="../assets/quote-left-solid.svg"
-        alt=""
-        class="quote-img"
-        srcset=""
-      />
-      <span id="quote" :class="{longquote:apidata.content.length>100}">{{ apidata.content }}</span>
-      <img
-        src="../assets/quote-right-solid.svg"
-        alt=""
-        class="quote-img"
-        srcset=""
-      />
+  <div>
+    <div class="quotecontainer" v-if="quotecontainer">
+      <!-- Quote -->
+      <div class="quote-text">
+        <img
+          src="../assets/quote-left-solid.svg"
+          alt=""
+          class="quote-img"
+          srcset=""
+        />
+        <span id="quote" :class="{ longquote: apidata.content.length > 100 }">{{
+          apidata.content
+        }}</span>
+        <img
+          src="../assets/quote-right-solid.svg"
+          alt=""
+          class="quote-img"
+          srcset=""
+        />
+      </div>
+      <!-- author -->
+      <div class="quote-author">
+        <span id="author">{{ apidata.author }}</span>
+      </div>
+      <!-- buttons -->
+      <div class="button-container">
+        <div id="twitter">
+          <a :href="`https://twitter.com/intent/tweet?text=${apidata.content} By ${apidata.author}`" target="_blank">
+            <img src="../assets/twitter-brands.svg" alt="" srcset="" />
+          </a>
+        </div>
+        <a
+          :href="`whatsapp://send?text=${apidata.content} -- ${apidata.author}`"
+          target="_blank"
+          class="twitter-button"
+        >
+          <img
+            src="../assets/whatsapp-brands.svg"
+            id="whatsapp_share"
+            alt=""
+            srcset=""
+          />
+        </a>
+        <button id="new-quote" @click="callingapi">New Quote</button>
+      </div>
     </div>
-    <!-- author -->
-    <div class="quote-author">
-      <span id="author">{{ apidata.author }}</span>
-    </div>
-    <!-- buttons -->
-    <div class="button-container">
-      <button class="twitter-button" id="twitter" title="Twit This!" >
-        <img src="../assets/twitter-brands.svg" alt="" srcset="" />
-      </button>
-      <a :href="`whatsapp://send?text=${apidata.content} by ${apidata.author}`" target="_blank" class="twitter-button" >
-        <img src="../assets/whatsapp-brands.svg" id="whatsapp_share" alt="" srcset="" />
-      </a>
-      <button id="new-quote" @click="callingapi">New Quote</button>
-    </div>
+    <div class="loader" v-if="!quotecontainer"></div>
   </div>
 </template>
 <script>
 import axios from "axios";
 export default {
-    data() {
-        return {
-            apidata: "",
-        }
-    },
+  data() {
+    return {
+      apidata: "",
+      quotecontainer: false,
+    };
+  },
   created() {
     this.callingapi();
   },
   methods: {
     async callingapi() {
-      await axios
-        .get(
-          `https://api.quotable.io/random`
-        )
-        .then((response) => {
+      await axios.get(`https://api.quotable.io/random`)
+      .then((response) => {
         //   console.log(response);
-          this.apidata = response.data
-        });
+        this.apidata = response.data;
+        this.quotecontainer = true;
+      });
     },
-    whatsappshare() {
-        window.open(`whatsapp://send?text=`)
-    }
   },
 };
 </script>
 <style>
 #whatsapp_share {
-    width: 60px;
-    height: 60px;
+  width: 60px;
+  height: 60px;
 }
 #twitter {
-  background-image: url("../assets/twitter-brands.svg");
-  background-repeat: no-repeat;
-  background-color: transparent; /* make the button transparent */
-  background-position: 0px 0px; /* equivalent to 'top left' */
-  border: none; /* assuming we don't want any borders */
-  cursor: pointer; /* make the cursor like hovering over an <a> element */
-  padding-left: 16px; /* make text start to the right of the image */
-  vertical-align: middle; /* align the text vertically centered */
+  width: 60px;
+  height: 60px;
 }
-#twitter:hover {
+/* #twitter:hover {
   background-color: #38a1f3;
-}
+} */
 .quote-text .quote-img {
   height: 2.5rem;
 }
-.quote-container {
+.quotecontainer {
   width: auto;
   max-width: 900px;
   padding: 20px 40px;
@@ -110,6 +116,7 @@ export default {
   margin-top: 15px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 button {
@@ -160,15 +167,25 @@ button:active {
     transform: rotate(360deg);
   }
 }
-
+#whatsapp_share {
+    display: none;
+  }
 /* Media Query: Tablet or Smaller */
 @media screen and (max-width: 1000px) {
-  .quote-container {
+  .quotecontainer {
     margin: auto 10px;
   }
 
   .quote-text {
     font-size: 2.5rem;
+  }
+}
+@media screen and (max-width: 767px) {
+  #whatsapp_share {
+    display: block;
+  }
+  #twitter {
+    display: none;
   }
 }
 </style>
